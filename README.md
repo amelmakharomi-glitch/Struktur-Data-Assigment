@@ -1,7 +1,7 @@
 ## Repository praktikum algoritma dan struktur data
 
 <pre>
-Nama : Arvinanto Bahtiar
-NIM : 2211110014
-Kelas : S1SD03-A
+Nama : Amelia Sofiana Makharomi
+NIM : 103112400233
+Kelas : IF-12-04
 </pre>
