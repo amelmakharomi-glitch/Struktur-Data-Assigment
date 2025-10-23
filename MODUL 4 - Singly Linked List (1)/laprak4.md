@@ -2,7 +2,7 @@
 <p align="center">Amelia Sofiana Makharomi</p>
 
 ## Dasar Teori
-Linked list adalah struktur data yang terdiri dari elemen-elemen yang saling terhubung dan bersifat fleksibel karena dapat bertambah atau berkurang sesuai kebutuhan. Data di dalamnya bisa berupa data tunggal (misalnya nama bertipe *string*) atau data majemuk (misalnya data mahasiswa yang berisi nama, NIM, dan alamat dengan tipe data berbeda).
+Singly Linked List merupakan struktur data dinamis yang tersusun dari beberapa node yang saling terhubung satu arah melalui pointer. Setiap node terdiri dari dua bagian, yaitu info sebagai penyimpan data dan next sebagai penunjuk ke node berikutnya. Struktur ini bersifat fleksibel karena ukurannya dapat berubah selama program berjalan. Operasi dasarnya meliputi pembuatan list, penambahan, penghapusan, penelusuran, dan penghitungan elemen. Kelebihannya terletak pada kemudahan menambah atau menghapus data tanpa menggeser elemen lain, sedangkan kelemahannya adalah akses data harus dilakukan secara berurutan dari node pertama.
 
 
 ## Guided 
@@ -260,72 +260,68 @@ int main(){
 }
 ```
 
-Program ini membangun sistem linked list mahasiswa yang dapat menyimpan, menambah, menghapus, dan menampilkan data secara dinamis.
-
 ## Unguided 
 
 ### 1. [Soal]
-**Singlylist.h**
+**singlylist.h**
 ```C++
 #ifndef SINGLYLIST_H
 #define SINGLYLIST_H
-
 #include <iostream>
 using namespace std;
 
+#define Nil NULL
+
 typedef int infotype;
+typedef struct ElmList *address;
 
 struct ElmList {
     infotype info;
-    ElmList* next;
+    address next;
 };
-
-typedef ElmList* address;
-
 struct List {
-    address First;
+    address first;
 };
-
 void createList(List &L);
 address alokasi(infotype x);
-void dealokasi(address P);
+void dealokasi(address &P);
 void insertFirst(List &L, address P);
 void printInfo(List L);
 
 #endif
+
 ```
 
-**Singlylist.cpp**
+**singlylist.cpp**
 ```C++
 #include "Singlylist.h"
+#include <iostream>
+using namespace std;
 
 void createList(List &L) {
-    L.First = nullptr;
+    L.first = Nil;
 }
-
 address alokasi(infotype x) {
     address P = new ElmList;
-    if (P != nullptr) {
+    if (P != Nil) {
         P->info = x;
-        P->next = nullptr;
+        P->next = Nil;
     }
     return P;
 }
-
-void dealokasi(address P) {
+void dealokasi(address &P) {
     delete P;
+    P = Nil;
 }
-
 void insertFirst(List &L, address P) {
-    if (P != nullptr) {
-        P->next = L.First;
-        L.First = P;
+    if (P != Nil) {
+        P->next = L.first;
+        L.first = P;
     }
 }
-
 void printInfo(List L) {
-    address P = L.First;
-    while (P != nullptr) {
+    address P = L.first;
+    while (P != Nil) {
         cout << P->info << " ";
         P = P->next;
     }
@@ -336,8 +332,16 @@ void printInfo(List L) {
 **main.cpp**
 ```C++
 #include "Singlylist.h"
+#include <iostream>
+#include <ctime>   
+using namespace std;
 
 int main() {
+    clock_t start, end;    
+    double exec_time;     
+
+    start = clock();      
+
     List L;
     address P1, P2, P3, P4, P5;
 
@@ -358,141 +362,150 @@ int main() {
     P5 = alokasi(9);
     insertFirst(L, P5);
 
+    cout << "Isi list: ";
     printInfo(L);
+
+    end = clock(); 
+    exec_time = double(end - start) / CLOCKS_PER_SEC;
+
+    cout << "Execution time : " << exec_time << " s" << endl;
+    cout << "Process returned 0 (0x0)" << endl;
 
     return 0;
 }
 ```
 
 #### Output:
-<img width="1230" height="207" alt="image" src="https://github.com/user-attachments/assets/f748c89e-95e8-4c39-a665-ccdbcad2811a" />
+<img width="823" height="94" alt="{840FEFA2-0CF8-43B4-AD97-0286053FAA94}" src="https://github.com/user-attachments/assets/c792f607-ced0-4f28-8666-d00e5e619417" />
 
-
-
-Program ini dipakai untuk membuat dan menampilkan daftar data sederhana menggunakan singly linked list. Setiap kali ada data baru, datanya dimasukkan di bagian depan, jadi urutannya jadi terbalik dari saat dimasukkan. Hasil akhirnya, program menampilkan angka 9 12 8 0 2 di layar.
+Program membentuk list kosong, kemudian menambahkan lima data (2, 0, 8, 12, dan 9) secara berurutan di bagian depan list, sehingga susunan akhirnya menjadi 9 → 12 → 8 → 0 → 2. Setelah itu, program menampilkan isi list ke layar dan menghitung lama waktu eksekusi program.
 
 #### Full code Screenshot:
-<img width="1912" height="1121" alt="image" src="https://github.com/user-attachments/assets/57fb7fb5-b007-4b72-9bd9-a9b24cdb3227" />
+<img width="1920" height="1080" alt="{5AE413E5-CE71-48CE-8805-254CDD558C51}" src="https://github.com/user-attachments/assets/fed889e7-8109-4bfb-bf42-382259921a9b" />
+
 
 ### 2. [Soal]
-**Singlylist.h**
+**singlylist.h**
 ```C++
 #ifndef SINGLYLIST_H
 #define SINGLYLIST_H
-
 #include <iostream>
 using namespace std;
 
-struct Node {
-    int data;
-    Node* next;
+#define Nil NULL
+
+typedef int infotype;
+typedef struct ElmList *address;
+
+struct ElmList {
+    infotype info;
+    address next;
 };
 
 struct List {
-    Node* head;
+    address first;
 };
 
 void createList(List &L);
-Node* createNode(int nilai);
-void deleteNode(Node* P);
-void insertFirst(List &L, Node* P);
-void printList(List L);
+address alokasi(infotype x);
+void dealokasi(address &P);
+void insertFirst(List &L, address P);
+void printInfo(List L);
 
-void deleteFirst(List &L, Node* &P);
-void deleteLast(List &L, Node* &P);
-void deleteAfter(Node* prec, Node* &P);
-int countList(List L);
-void deleteAll(List &L);
+void deleteFirst(List &L, address &P);
+void deleteLast(List &L, address &P);
+void deleteAfter(address Prec, address &P);
+int nbList(List L);
+void deleteList(List &L);
 
 #endif
 ```
 
-**Singlylist.cpp**
+**singlylist.cpp**
 ```C++
 #include "Singlylist.h"
+#include <iostream>
+using namespace std;
 
 void createList(List &L) {
-    L.head = nullptr;
+    L.first = Nil;
 }
-
-Node* createNode(int nilai) {
-    Node* P = new Node;
-    P->data = nilai;
-    P->next = nullptr;
+address alokasi(infotype x) {
+    address P = new ElmList;
+    if (P != Nil) {
+        P->info = x;
+        P->next = Nil;
+    }
     return P;
 }
-
-void deleteNode(Node* P) {
+void dealokasi(address &P) {
     delete P;
+    P = Nil;
 }
-
-void insertFirst(List &L, Node* P) {
-    if (P != nullptr) {
-        P->next = L.head;
-        L.head = P;
+void insertFirst(List &L, address P) {
+    if (P != Nil) {
+        P->next = L.first;
+        L.first = P;
     }
 }
-
-void printList(List L) {
-    Node* P = L.head;
-    while (P != nullptr) {
-        cout << P->data << " ";
+void printInfo(List L) {
+    address P = L.first;
+    while (P != Nil) {
+        cout << P->info << " ";
         P = P->next;
     }
     cout << endl;
 }
 
-void deleteFirst(List &L, Node* &P) {
-    if (L.head != nullptr) {
-        P = L.head;
-        L.head = P->next;
-        P->next = nullptr;
+void deleteFirst(List &L, address &P) {
+    if (L.first != Nil) {
+        P = L.first;
+        L.first = L.first->next;
+        P->next = Nil;
     } else {
-        P = nullptr;
+        P = Nil;
     }
 }
-
-void deleteLast(List &L, Node* &P) {
-    if (L.head == nullptr) {
-        P = nullptr;
-    } else if (L.head->next == nullptr) {
-        P = L.head;
-        L.head = nullptr;
-    } else {
-        Node* Q = L.head;
-        while (Q->next->next != nullptr) {
-            Q = Q->next;
+void deleteLast(List &L, address &P) {
+    if (L.first != Nil) {
+        address Q = L.first;
+        if (Q->next == Nil) { 
+            P = Q;
+            L.first = Nil;
+        } else {
+            while (Q->next->next != Nil) {
+                Q = Q->next;
+            }
+            P = Q->next;
+            Q->next = Nil;
         }
-        P = Q->next;
-        Q->next = nullptr;
-    }
-}
-
-void deleteAfter(Node* prec, Node* &P) {
-    if (prec != nullptr && prec->next != nullptr) {
-        P = prec->next;
-        prec->next = P->next;
-        P->next = nullptr;
     } else {
-        P = nullptr;
+        P = Nil;
     }
 }
-
-int countList(List L) {
-    int jumlah = 0;
-    Node* P = L.head;
-    while (P != nullptr) {
-        jumlah++;
+void deleteAfter(address Prec, address &P) {
+    if (Prec != Nil && Prec->next != Nil) {
+        P = Prec->next;
+        Prec->next = P->next;
+        P->next = Nil;
+    } else {
+        P = Nil;
+    }
+}
+int nbList(List L) {
+    int count = 0;
+    address P = L.first;
+    while (P != Nil) {
+        count++;
         P = P->next;
     }
-    return jumlah;
+    return count;
 }
-
-void deleteAll(List &L) {
-    Node* P;
-    while (L.head != nullptr) {
+void deleteList(List &L) {
+    address P;
+    while (L.first != Nil) {
         deleteFirst(L, P);
-        deleteNode(P);
+        dealokasi(P);
     }
 }
 ```
@@ -500,55 +513,55 @@ void deleteAll(List &L) {
 **main.cpp**
 ```C++
 #include "Singlylist.h"
+#include <iostream>
+using namespace std;
 
 int main() {
     List L;
-    Node *P, *hapus;
-
+    address P1, P2, P3, P4, P5, Pdel;
+    
     createList(L);
 
-    insertFirst(L, createNode(2));
-    insertFirst(L, createNode(0));
-    insertFirst(L, createNode(8));
-    insertFirst(L, createNode(12));
-    insertFirst(L, createNode(9));
+    P1 = alokasi(2); insertFirst(L, P1);
+    P2 = alokasi(0); insertFirst(L, P2);
+    P3 = alokasi(8); insertFirst(L, P3);
+    P4 = alokasi(12); insertFirst(L, P4);
+    P5 = alokasi(9); insertFirst(L, P5);
 
-    deleteFirst(L, hapus);
-    deleteNode(hapus);
+    deleteFirst(L, Pdel);
+    dealokasi(Pdel);
 
-    deleteLast(L, hapus);
-    deleteNode(hapus);
+    deleteLast(L, Pdel);
+    dealokasi(Pdel);
 
-    Node* prec = L.head;
-    deleteAfter(prec, hapus);
-    deleteNode(hapus);
+    deleteAfter(L.first, Pdel); 
+    dealokasi(Pdel);
 
-    printList(L);
-    cout << "Jumlah node : " << countList(L) << endl;
+    printInfo(L);
+    cout << "Jumlah node : " << nbList(L) << endl;
 
-    deleteAll(L);
-    cout << "\n- List Berhasil Terhapus -" << endl;
-    cout << "Jumlah node : " << countList(L) << endl;
+    deleteList(L);
+    cout << endl << "- List Berhasil Terhapus -" << endl;
+    cout << "Jumlah node : " << nbList(L) << endl;
 
     return 0;
 }
 ```
 
 #### Output:
-<img width="1235" height="311" alt="image" src="https://github.com/user-attachments/assets/36a32c4e-b103-40d6-8d5f-a2e55fe1e1d8" />
+<img width="884" height="137" alt="{AEBEC06B-990F-4CBD-85F0-7AFCC771D657}" src="https://github.com/user-attachments/assets/95374911-3829-4e2c-9666-acbf477d59b7" />
 
-
-
-Kesimpulannya, program ini digunakan untuk menghapus data dari sebuah **linked list** satu per satu. Pertama, data paling depan (9) dihapus, lalu data paling belakang (2), dan setelah itu data di tengah (8). Hasil akhirnya, list hanya tersisa **12 dan 0**, kemudian semua data dihapus sampai list benar-benar kosong.
+Program ini menunjukkan cara melakukan berbagai operasi penghapusan pada singly linked list. Setelah penghapusan beberapa node dan penampilan hasil, list akhirnya dikosongkan sepenuhnya menggunakan deleteList(). Hasil akhir menampilkan dua node tersisa (12 → 0) sebelum list dihapus total.
 
 #### Full code Screenshot:
-<img width="1919" height="1126" alt="image" src="https://github.com/user-attachments/assets/3dee54d9-6833-4194-8bab-a354e4230c11" />
-
-
+<img width="1920" height="1080" alt="{49EBDEBC-D4B4-471F-9E92-91EF439D1598}" src="https://github.com/user-attachments/assets/694aad2a-cf94-4149-8399-3e39ebc84936" />
 
 
 ## Kesimpulan
-Kesimpulannya, program ini dipakai untuk menambah dan menghapus data secara fleksibel dengan bantuan pointer. Data tersimpan dalam bentuk rantai (node-node) yang saling terhubung, dan bisa dihapus kapan saja. Setelah semua proses selesai, list jadi kosong, menandakan data berhasil dikelola tanpa perlu ukuran tetap seperti array.
+Singly Linked List merupakan struktur data linear berbasis pointer yang memungkinkan penyimpanan dan pengelolaan data secara dinamis. Setiap node saling terhubung satu arah melalui pointer next, dan semua operasi (penyisipan, penghapusan, pencarian, serta perhitungan jumlah elemen) dilakukan dengan cara menelusuri node satu per satu dari node pertama.
 
 ## Referensi
+1. Modul 4-Singly Linked List (Bagian Pertama)
+2. 
+
 Materi Modul 4, Wijoyo, A., Prasetiyo, A. R., Salsabila, A. A., Nife, K., Murni, & Nadapdap, P. B. (2024). Evaluasi Efisiensi Struktur Data Linked List pada Implementasi Sistem Antrian. Jurnal Riset Informatika dan Inovasi, 1(12), 1–9.
