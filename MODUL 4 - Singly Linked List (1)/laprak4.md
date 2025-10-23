@@ -562,6 +562,4 @@ Singly Linked List merupakan struktur data linear berbasis pointer yang memungki
 
 ## Referensi
 1. Modul 4-Singly Linked List (Bagian Pertama)
-2. 
-
-Materi Modul 4, Wijoyo, A., Prasetiyo, A. R., Salsabila, A. A., Nife, K., Murni, & Nadapdap, P. B. (2024). Evaluasi Efisiensi Struktur Data Linked List pada Implementasi Sistem Antrian. Jurnal Riset Informatika dan Inovasi, 1(12), 1–9.
+2. Analysis of Arraylist and Linked list (2019). Comparison between ArrayList and singly linked list with insertion, deletion, search operations.
