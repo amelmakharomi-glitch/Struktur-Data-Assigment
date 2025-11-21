@@ -4,8 +4,9 @@
 
 ## Dasar Teori
 
-Modul ini membahas dasar-dasar struktur data Stack menggunakan array dalam bahasa C++. Stack merupakan struktur data yang mengikuti prinsip Last In, First Out (LIFO), di mana elemen yang terakhir dimasukkan akan menjadi elemen pertama yang dikeluarkan. Dalam implementasi berbasis array, stack terdiri dari sebuah array penampung data dan variabel top yang menunjuk ke posisi elemen teratas. Modul menjelaskan cara menginisialisasi stack, menambah data menggunakan operasi push, menghapus data menggunakan pop, serta menampilkan isi stack melalui printInfo. Selain operasi dasar, modul juga memperkenalkan pengembangan stack seperti membalik urutan elemen dengan balikStack, memasukkan elemen secara terurut menggunakan pushAscending, dan membaca input karakter berturut-turut dengan getInputStream. Dengan mempelajari materi ini, mahasiswa dapat memahami bagaimana stack bekerja, bagaimana operasi dilakukan pada struktur LIFO, serta bagaimana array dimanfaatkan untuk mengelola data secara terstruktur dan efisien.
-## Guided 
+Stack adalah struktur data linear yang bekerja dengan prinsip **LIFO (Last In, First Out)**, yaitu data yang terakhir dimasukkan akan menjadi data pertama yang dikeluarkan. Operasi utama pada stack meliputi **push** untuk menambah elemen ke bagian atas, **pop** untuk menghapus elemen teratas, dan **peek** untuk melihat elemen teratas tanpa menghapusnya. Stack dapat diimplementasikan menggunakan **array** yang bersifat statis atau **linked list** yang bersifat dinamis. Struktur data ini banyak digunakan dalam berbagai aplikasi seperti fitur **undo/redo**, navigasi **back/forward** pada browser, **call stack** dalam pemanggilan fungsi, evaluasi ekspresi matematika, serta pengecekan keseimbangan tanda kurung.
+
+## Guided
 
 ### 1. [Stack]
 *stack.h*
@@ -183,8 +184,6 @@ int main(){
 }
 ```
 
-Program ini mengimplementasikan struktur data Stack menggunakan array dengan kapasitas tetap. Stack disimpan dalam struct stackTable yang memiliki array data dan variabel top sebagai penanda elemen teratas. Fungsi dasar seperti push dan pop digunakan untuk menambah dan menghapus elemen sesuai prinsip LIFO, sedangkan isEmpty dan isFull memeriksa kondisi stack. Fungsi update memungkinkan perubahan nilai pada posisi tertentu yang dihitung dari bagian atas stack, view menampilkan seluruh isi stack dari atas ke bawah, dan searchData melakukan pencarian elemen mulai dari top. Dalam fungsi main, beberapa data dimasukkan, dihapus, diperbarui, dan dicari sehingga menunjukkan bagaimana operasi-operasi stack bekerja secara keseluruhan.
-
 ## Unguided 
 
 ### 1. [Soal]
@@ -192,210 +191,244 @@ Program ini mengimplementasikan struktur data Stack menggunakan array dengan kap
 ```C++
 #ifndef STACK_H
 #define STACK_H
+#define MAX 20
 
 typedef int infotype;
+struct Stack {
+    infotype info[MAX]; 
+    int top;           
+};
+int IsFull(Stack S);
+int IsEmpty(Stack S);
 
-typedef struct {
-    infotype info[20];
-    int top;
-} Stack;
-
-void createStack(Stack &S);
-void push(Stack &S, infotype x);
+void CreateStack(Stack &S);
+void push(Stack &S, infotype X);
 infotype pop(Stack &S);
+
 void printInfo(Stack S);
 void balikStack(Stack &S);
 
-#endif
+#endif 
 ```
 *stack.cpp*
 ```C++
-#include <iostream>
 #include "stack.h"
+#include <iostream>
+
 using namespace std;
 
-void createStack(Stack &S) {
-    S.top = -1;
+int IsEmpty(Stack S) {
+    return (S.top == -1);
 }
-
-void push(Stack &S, infotype x) {
-    if (S.top < 19) {
+int IsFull(Stack S) {
+    return (S.top == MAX - 1);
+}
+void CreateStack(Stack &S) {
+    S.top = -1; 
+}
+void push(Stack &S, infotype X) {
+    if (IsFull(S)) {
+        cout << "Stack Penuh, Push Gagal!" << endl;
+    } else {
         S.top++;
-        S.info[S.top] = x;
-    } else {
-        cout << "Stack penuh!" << endl;
+        S.info[S.top] = X;
     }
 }
-
 infotype pop(Stack &S) {
-    if (S.top >= 0) {
-        int x = S.info[S.top];
-        S.top--;
-        return x;
+    if (IsEmpty(S)) {
+        cout << "Stack Kosong, Pop Gagal!" << endl;
+        return 0; 
     } else {
-        cout << "Stack kosong!" << endl;
-        return -1;
+        infotype X = S.info[S.top];
+        S.top--; 
+        return X; 
     }
 }
-
 void printInfo(Stack S) {
     cout << "[TOP] ";
+    if (IsEmpty(S)) {
+        cout << "Stack Kosong" << endl;
+        return;
+    }
     for (int i = S.top; i >= 0; i--) {
         cout << S.info[i] << " ";
     }
     cout << endl;
 }
-
-void balikStack(Stack &S) {
-    Stack temp;
-    createStack(temp);
-
-    while (S.top != -1) {
-        push(temp, pop(S));
+void insertAtBottom(Stack &S, infotype X) {
+    if (IsEmpty(S)) {
+        push(S, X); 
+        return;
     }
-
-    S = temp;
+    infotype temp = pop(S); 
+    insertAtBottom(S, X); 
+    push(S, temp); 
+}
+void balikStack(Stack &S) {
+    if (IsEmpty(S)) {
+        return;
+    }
+    infotype X = pop(S); 
+    balikStack(S);     
+    insertAtBottom(S, X); 
 }
 ```
 *main.cpp*
 ```C++
-#include <iostream>
 #include "stack.h"
+#include <iostream>
+
 using namespace std;
 
 int main() {
     cout << "Hello world!" << endl;
 
     Stack S;
-    createStack(S);
+    CreateStack(S); 
 
-    push(S, 3);
-    push(S, 4);
-    push(S, 8);
-    pop(S);
-    push(S, 2);
-    push(S, 3);
-    pop(S);
-    push(S, 9);
+    push(S, 3); 
+    push(S, 4); 
+    push(S, 8); 
+    
+    pop(S);     
+    
+    push(S, 2); 
+    push(S, 3); 
+    
+    pop(S);     
+    
+    push(S, 9); 
+    printInfo(S); 
 
-    printInfo(S);
-
-    cout << "balik stack" << endl;
-    balikStack(S);
-
+    cout << "balik stack" << endl; 
+    
+    balikStack(S); 
     printInfo(S);
 
     return 0;
 }
 ```
 #### Output:
-<img width="785" height="183" alt="image" src="https://github.com/user-attachments/assets/21905806-3133-4832-9a88-82bc969d40e4" />
+<img width="1032" height="137" alt="{3EB134B0-3573-4023-B64E-E42F719375FC}" src="https://github.com/user-attachments/assets/27822935-bcbb-472e-b099-593427d362a6" />
 
-Program ini mengimplementasikan ADT Stack menggunakan array. Stack menyimpan data dalam array info dan menggunakan variabel top untuk menandai posisi elemen paling atas. Fungsi createStack menginisialisasi stack, push menambah elemen ke atas stack, dan pop menghapus elemen teratas. Fungsi printInfo menampilkan isi stack dari atas ke bawah, sedangkan balikStack membalik urutan stack menggunakan stack sementara. Di fungsi main, beberapa operasi push dan pop dilakukan, kemudian isi stack ditampilkan sebelum dan sesudah dibalik.
+Program ini bertujuan untuk mengimplementasikan Abstract Data Type (ADT) Stack (Tumpukan) menggunakan Representasi Tabel (Array) dalam bahasa pemrograman C++. Implementasi harus mendukung operasi dasar Stack berdasarkan prinsip LIFO (Last In First Out), serta prosedur tambahan untuk membalik urutan elemen dalam Stack (balikStack).
 
 #### Full code Screenshot:
-<img width="404" height="439" alt="image" src="https://github.com/user-attachments/assets/49b94a02-1d5c-4ffa-a559-b9de0f33df7c" />
-<img width="469" height="973" alt="image" src="https://github.com/user-attachments/assets/aa46b6dd-997c-4418-93a5-55a8e09a223a" />
-<img width="438" height="638" alt="image" src="https://github.com/user-attachments/assets/3ea58a78-cee0-4f73-870c-0ef48920f927" />
+<img width="1920" height="1080" alt="{2C5EED14-09B0-4EDB-83A9-41034003F265}" src="https://github.com/user-attachments/assets/08142c6d-660d-4952-8dfd-a00f05f1be26" />
+<img width="1920" height="1080" alt="{60179764-CFA0-4B90-8D6C-A625D806D8C1}" src="https://github.com/user-attachments/assets/123c8b88-e60a-4452-9eee-0ea236894020" />
+<img width="1920" height="1080" alt="{626180D8-A5EA-41E0-B50F-2DEB7003F8FD}" src="https://github.com/user-attachments/assets/9e97c89f-b3f0-4fd8-ba19-4156415ab590" />
+<img width="1920" height="1080" alt="{9D1DB8C5-CBCE-48EF-A5FC-F67D17D9D90C}" src="https://github.com/user-attachments/assets/0cc2c8f7-10bf-48ed-b688-cdd0978faff1" />
+
 
 ### 2. [Soal]
 *stack.h*
 ```C++
 #ifndef STACK_H
 #define STACK_H
+#define MAX 20           
+typedef int infotype;    
 
-typedef int infotype;
-
-typedef struct {
-    infotype info[20];
+struct Stack {
+    infotype info[MAX];
     int top;
-} Stack;
+}; 
+void CreateStack(Stack &S);
+int IsEmpty(Stack S);
+int IsFull(Stack S);
+void push(Stack &S, infotype X);
 
-void createStack(Stack &S);
-void push(Stack &S, infotype x);
-infotype pop(Stack &S);
+infotype pop(Stack &S); 
 void printInfo(Stack S);
-void balikStack(Stack &S);
-void pushAscending(Stack &S, infotype x);
 
-#endif
+void insertAtBottom(Stack &S, infotype X); 
+void balikStack(Stack &S);
+void pushAscending(Stack &S, infotype X);  
+
+#endif 
 ```
 *stack.cpp*
 ```C++
-#include <iostream>
 #include "stack.h"
+#include <iostream>
 using namespace std;
 
-void createStack(Stack &S) {
-    S.top = -1;
+int IsEmpty(Stack S) {
+    return (S.top == -1);
 }
-
-void push(Stack &S, infotype x) {
-    if (S.top < 19) {
+int IsFull(Stack S) {
+    return (S.top == MAX - 1);
+}
+void CreateStack(Stack &S) {
+    S.top = -1; 
+}
+void push(Stack &S, infotype X) {
+    if (IsFull(S)) {
+        cout << "Stack Penuh, Push Gagal!" << endl;
+    } else {
         S.top++;
-        S.info[S.top] = x;
-    } else {
-        cout << "Stack penuh!" << endl;
+        S.info[S.top] = X;
     }
 }
-
 infotype pop(Stack &S) {
-    if (S.top >= 0) {
-        int x = S.info[S.top];
-        S.top--;
-        return x;
+    if (IsEmpty(S)) {
+        cout << "Stack Kosong, Pop Gagal!" << endl;
+        return 0; 
     } else {
-        cout << "Stack kosong!" << endl;
-        return -1;
+        infotype X = S.info[S.top];
+        S.top--; 
+        return X;
     }
 }
-
 void printInfo(Stack S) {
     cout << "[TOP] ";
+    if (IsEmpty(S)) {
+        cout << "Stack Kosong" << endl;
+        return;
+    }
     for (int i = S.top; i >= 0; i--) {
         cout << S.info[i] << " ";
     }
     cout << endl;
 }
-
+void insertAtBottom(Stack &S, infotype X) {
+    if (IsEmpty(S)) {
+        push(S, X); 
+        return;
+    }
+    infotype temp = pop(S); 
+    insertAtBottom(S, X); 
+    push(S, temp); 
+}
 void balikStack(Stack &S) {
-    Stack temp;
-    createStack(temp);
-
-    while (S.top != -1) {
-        push(temp, pop(S));
+    if (IsEmpty(S)) {
+        return;
     }
-
-    S = temp;
+    infotype X = pop(S); 
+    balikStack(S);     
+    insertAtBottom(S, X); 
 }
-
-void pushAscending(Stack &S, infotype x) {
-    Stack temp;
-    createStack(temp);
-
-    while (S.top != -1 && S.info[S.top] > x) {
-        push(temp, pop(S));
+void pushAscending(Stack &S, infotype X) {
+    if (IsEmpty(S) || S.info[S.top] <= X) {
+        push(S, X); 
+        return;
     }
-
-    push(S, x);
-
-    while (temp.top != -1) {
-        push(S, pop(temp));
-    }
+    infotype temp = pop(S); 
+    pushAscending(S, X);    
+    push(S, temp);          
 }
-
 ```
 *main.cpp*
 ```C++
-#include <iostream>
 #include "stack.h"
+#include <iostream>
 using namespace std;
 
-int main() {
+int main()
+{
     cout << "Hello world!" << endl;
-
+    
     Stack S;
-    createStack(S);
+    CreateStack(S);
 
     pushAscending(S, 3);
     pushAscending(S, 4);
@@ -403,164 +436,139 @@ int main() {
     pushAscending(S, 2);
     pushAscending(S, 3);
     pushAscending(S, 9);
-
-    printInfo(S);
-
+    
+    cout << "Setelah pushAscending:" << endl;
+    printInfo(S); 
     cout << "balik stack" << endl;
     balikStack(S);
-    printInfo(S);
-
+    printInfo(S); 
+    
     return 0;
 }
 ```
 #### Output:
-<img width="787" height="183" alt="image" src="https://github.com/user-attachments/assets/7340f79e-c980-47ef-8d51-683a56ba4121" />
+<img width="1014" height="153" alt="{30A044AA-A453-46BB-90CA-5901DD43DF7E}" src="https://github.com/user-attachments/assets/020bfc76-6176-4ea7-aac4-0c70542f2c91" />
 
-Fungsi pushAscending memasukkan data ke stack sambil menjaga agar elemen-elemen di dalamnya tetap terurut naik. Cara kerjanya adalah memindahkan sementara elemen yang lebih besar, memasukkan nilai baru, lalu mengembalikan elemen yang dipindahkan. Di main, beberapa nilai dimasukkan dengan pushAscending, sehingga stack langsung tersusun ascending. Setelah ditampilkan, stack dibalik dengan balikStack dan hasilnya ditampilkan kembali.
+Program menjalankan siklus inisialisasi, lalu menggunakan prosedur pushAscending (penyisipan terurut) untuk memasukkan enam elemen; prosedur rekursif ini menjamin urutan terurut menaik (terkecil di dasar, terbesar di TOP), menghasilkan 9 8 4 3 3 2. Setelah itu, prosedur balikStack dipanggil untuk membalikkan seluruh tumpukan, menghasilkan output akhir 2 3 3 4 8 9.
 
 #### Full code Screenshot:
-<img width="429" height="450" alt="image" src="https://github.com/user-attachments/assets/d0e58b3e-2a1e-4495-b214-a1c400759466" />
-<img width="368" height="890" alt="image" src="https://github.com/user-attachments/assets/5d090075-39fe-44f9-b741-15e5888487ce" />
-<img width="436" height="576" alt="image" src="https://github.com/user-attachments/assets/eacb0216-15b2-4b42-99dd-cb59b21e637d" />
+<img width="1920" height="1080" alt="{261E7B77-DA8F-4243-83DC-A77D9B6543FF}" src="https://github.com/user-attachments/assets/e9d17381-36bd-4131-af0a-6caad2d0dee7" />
+<img width="1920" height="1080" alt="{B3C53CDD-5F5B-465D-9162-3130D7E8DDC5}" src="https://github.com/user-attachments/assets/6a2984a6-9dff-49ef-ac10-14672b65096b" />
+<img width="1920" height="1080" alt="{D106D5A0-7C52-4D83-B6EB-B3B0EA24441F}" src="https://github.com/user-attachments/assets/ef54c394-b9c5-49d4-90a5-4f375ed6cdf8" />
+<img width="1920" height="1080" alt="{B9F18226-A7DD-4FE3-A805-B6ACED77842B}" src="https://github.com/user-attachments/assets/fe9a29ff-9429-4d93-bbbc-1c2189ace4c4" />
+
 
 ### 3. [Soal]
 *stack.h*
 ```C++
 #ifndef STACK_H
 #define STACK_H
+#define MAX 20           
 
-typedef int infotype;
-
-typedef struct {
-    infotype info[20];
+typedef int infotype;    
+struct Stack {
+    infotype info[MAX];
     int top;
-} Stack;
-
-void createStack(Stack &S);
-void push(Stack &S, infotype x);
-infotype pop(Stack &S);
+};
+void CreateStack(Stack &S);
+int IsEmpty(Stack S);
+int IsFull(Stack S);
+void push(Stack &S, infotype X);
+infotype pop(Stack &S); 
 void printInfo(Stack S);
+void insertAtBottom(Stack &S, infotype X); 
 void balikStack(Stack &S);
-void pushAscending(Stack &S, infotype x);
-void getInputStream(Stack &S);
+void pushAscending(Stack &S, infotype X); 
+void getInputStream(Stack &S); 
 
-#endif
+#endif 
 ```
 *stack.cpp*
 ```C++
-#include <iostream>
 #include "stack.h"
-using namespace std;
+#include <iostream>
 
-void createStack(Stack &S) {
-    S.top = -1;
+using namespace std; 
+void CreateStack(Stack &S) { S.top = -1; }
+int IsEmpty(Stack S) { return (S.top == -1); }
+int IsFull(Stack S) { return (S.top == MAX - 1); }
+void push(Stack &S, infotype X) {
+    if (IsFull(S)) { cout << "Error: Stack Penuh, Push Gagal!" << endl; } 
+    else { S.top++; S.info[S.top] = X; }
 }
-
-void push(Stack &S, infotype x) {
-    if (S.top < 19) {
-        S.top++;
-        S.info[S.top] = x;
-    } else {
-        cout << "Stack penuh!" << endl;
-    }
-}
-
 infotype pop(Stack &S) {
-    if (S.top >= 0) {
-        int x = S.info[S.top];
-        S.top--;
-        return x;
-    } else {
-        cout << "Stack kosong!" << endl;
-        return -1;
-    }
+    if (IsEmpty(S)) { cout << "Error: Stack Kosong, Pop Gagal!" << endl; return 0; } 
+    else { infotype X = S.info[S.top]; S.top--; return X; }
 }
-
 void printInfo(Stack S) {
     cout << "[TOP] ";
-    for (int i = S.top; i >= 0; i--) {
-        cout << S.info[i] << " ";
-    }
+    if (IsEmpty(S)) { cout << "Stack Kosong" << endl; return; }
+    for (int i = S.top; i >= 0; i--) { cout << S.info[i] << " "; }
     cout << endl;
 }
-
+void insertAtBottom(Stack &S, infotype X) {
+    if (IsEmpty(S)) { push(S, X); return; }
+    infotype temp = pop(S); insertAtBottom(S, X); push(S, temp); 
+}
 void balikStack(Stack &S) {
-    Stack temp;
-    createStack(temp);
-
-    while (S.top != -1) {
-        push(temp, pop(S));
-    }
-
-    S = temp;
+    if (IsEmpty(S)) { return; }
+    infotype X = pop(S); balikStack(S); insertAtBottom(S, X); 
 }
-
-void pushAscending(Stack &S, infotype x) {
-    Stack temp;
-    createStack(temp);
-
-    while (S.top != -1 && S.info[S.top] > x) {
-        push(temp, pop(S));
-    }
-
-    push(S, x);
-
-    while (temp.top != -1) {
-        push(S, pop(temp));
-    }
+void pushAscending(Stack &S, infotype X) {
+    if (IsEmpty(S) || S.info[S.top] <= X) { push(S, X); return; }
+    infotype temp = pop(S); pushAscending(S, X); push(S, temp);          
 }
-
 void getInputStream(Stack &S) {
-    char c;
-
-    cin >> c;
-
-    while (c != '\n')
-    {
-        push(S, c - '0');
-        c = cin.get();
+    char ch;
+    
+    cout << "Input : ";
+    while (cin.get(ch) && ch != '\n') {
+        
+        if (ch >= '0' && ch <= '9') {
+            infotype X = ch - '0';
+            push(S, X); 
+        } 
     }
 }
 ```
 *main.cpp*
 ```C++
-#include <iostream>
 #include "stack.h"
+#include <iostream>
+
 using namespace std;
 
-int main() {
+int main()
+{
     cout << "Hello world!" << endl;
-
     Stack S;
-    createStack(S);
-
-    getInputStream(S);
-
-    printInfo(S);
-
+    CreateStack(S);
+    getInputStream(S); 
+    printInfo(S); 
+    
     cout << "balik stack" << endl;
     balikStack(S);
-    printInfo(S);
-
+    printInfo(S); 
+    
     return 0;
 }
 ```
 #### Output:
-<img width="781" height="199" alt="image" src="https://github.com/user-attachments/assets/c310e061-eee7-474d-bc68-353d6aaa0d28" />
+<img width="1024" height="160" alt="{2AA0788D-A214-496B-B485-E3E699394F4D}" src="https://github.com/user-attachments/assets/170b084f-ad7c-4f3d-b107-353f6b1c877c" />
 
-getInputStream membaca input pengguna satu karakter setiap kali, kemudian memasukkan setiap karakter angka ke dalam stack. Pembacaan dilakukan terus-menerus menggunakan cin.get() sampai pengguna menekan tombol ENTER. Setiap karakter yang diterima dikonversi menjadi angka dan langsung dimasukkan ke stack dengan push. Di fungsi main, input dimasukkan sebagai rangkaian angka, lalu isi stack ditampilkan sebelum dan sesudah dibalik menggunakan balikStack.
+Program ini berfokus pada pemrosesan input data stream. Prosedur getInputStream membaca input pengguna karakter demi karakter, memfilter hanya digit, dan menyisipkannya ke Stack (LIFO). Untuk mengembalikan urutan ke kondisi asli input, Stack kemudian dibalik oleh balikStack. Hasil akhirnya adalah tampilan urutan digit yang sama persis seperti yang dimasukkan pengguna.
 
 #### Full code Screenshot:
-<img width="419" height="485" alt="image" src="https://github.com/user-attachments/assets/3fdf8e30-5b0a-4e1e-ba72-ea67dcccd39a" />
-<img width="309" height="883" alt="image" src="https://github.com/user-attachments/assets/b56f6a8e-6351-432e-9580-9997050d09c5" />
-<img width="389" height="503" alt="image" src="https://github.com/user-attachments/assets/6aaccb67-9de1-49de-a9a0-b33b9685f103" />
+<img width="1920" height="1080" alt="{C0E695AD-01B6-477C-9346-D2FD2F8CC441}" src="https://github.com/user-attachments/assets/a245c7da-a111-40d5-99d6-0b8a7e3f0237" />
+<img width="1920" height="1080" alt="{6576DADD-0430-4318-9EFD-2DD50791B8E7}" src="https://github.com/user-attachments/assets/c5764cbd-692e-4d4e-bfd8-205be7b0fc74" />
+<img width="1920" height="1080" alt="{5B4164CB-0D71-4AEF-9675-A0D9D1849F78}" src="https://github.com/user-attachments/assets/d930c073-1c21-4dd6-ab99-49c8e2952c13" />
+<img width="1920" height="1080" alt="{E467B6D8-041A-4DD6-80D4-532EF5E3C460}" src="https://github.com/user-attachments/assets/8de03d08-bbd2-4946-9813-8ce93ff3b607" />
 
 
 ## Kesimpulan
-Kesimpulan dari ketiga program di atas adalah bahwa semuanya menerapkan konsep struktur data stack menggunakan array sebagai media penyimpanan. Program pertama menekankan pada operasi dasar seperti push, pop, menampilkan isi stack, serta membalik urutannya. Program kedua memperluas fungsi stack dengan menambahkan pushAscending yang memungkinkan penyisipan data secara terurut. Program ketiga menambahkan kemampuan membaca input karakter berurutan dari pengguna melalui getInputStream. Dari seluruh program tersebut dapat disimpulkan bahwa implementasi stack dengan array memungkinkan pengelolaan data secara terstruktur berdasarkan prinsip LIFO, sekaligus dapat dikembangkan dengan berbagai fitur tambahan. Pemahaman mengenai indeks array, operasi pada variabel top, serta alur masuk-keluarnya data menjadi hal penting agar stack dapat dikelola dengan benar dan efisien.
-
+Program ini berhasil mengimplementasikan Abstract Data Type (ADT) Stack berbasis array dengan fungsionalitas lanjutan. Implementasi ini mendemonstrasikan bahwa manipulasi urutan kompleks seperti pembalikan (balikStack) dan penyisipan terurut (pushAscending) dapat dicapai secara efektif melalui rekursi, dengan tetap mematuhi batasan operasi Stack (hanya push dan pop). Selain itu, program berhasil mengintegrasikan pemrosesan input dari pengguna (getInputStream) untuk mengubah karakter mentah menjadi elemen Stack, membuktikan penguasaan prinsip LIFO dan integrasi I/O.
 
 ## Referensi
-[1] GeeksforGeeks. (n.d.). Stack Data Structure. https://www.geeksforgeeks.org/stack-data-structure/
-[2] Tutorialspoint. (n.d.). Data Structures — Stack. https://www.tutorialspoint.com/data_structures_algorithms/stack_algorithm.htm
-[3] W3Schools. (n.d.). C++ Input and Streams. https://www.w3schools.com/cpp/cpp_files.asp
+1. Modul 7 Stack
+2. Konsep dan Implementasi Stack dengan Array di C++.
+3. GeeksforGeeks. (2025). C++ Program For char to int Conversion.
