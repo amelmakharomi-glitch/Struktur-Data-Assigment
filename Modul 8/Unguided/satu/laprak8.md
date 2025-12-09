@@ -305,254 +305,321 @@ Program ini mensimulasikan Queue yang diimplementasikan menggunakan array beruku
 
 
 ### 2. [Soal]
-*stack.h*
+*queue.h*
 ```C++
-#ifndef STACK_H
-#define STACK_H
-#define MAX 20           
-typedef int infotype;    
+#ifndef ANTREAM_H
+#define ANTREAM_H
 
-struct Stack {
-    infotype info[MAX];
-    int top;
-}; 
-void CreateStack(Stack &S);
-int IsEmpty(Stack S);
-int IsFull(Stack S);
-void push(Stack &S, infotype X);
-
-infotype pop(Stack &S); 
-void printInfo(Stack S);
-
-void insertAtBottom(Stack &S, infotype X); 
-void balikStack(Stack &S);
-void pushAscending(Stack &S, infotype X);  
-
-#endif 
-```
-*stack.cpp*
-```C++
-#include "stack.h"
 #include <iostream>
+
+typedef int TipeData;
+
+#define MAX_ELEMEN 5 
+
+struct Antrean {
+    TipeData data[MAX_ELEMEN]; 
+    int depan;                
+    int belakang;              
+};
+void buatAntreanKosong(Antrean &Q);
+bool apaKosong(Antrean Q);
+bool apaPenuh(Antrean Q);
+void masukkan(Antrean &Q, TipeData nilaiBaru);
+TipeData keluarkan(Antrean &Q);
+void tampilkanData(Antrean Q);
+
+#endif
+```
+*queue.cpp*
+```C++
+#include "queue.h"
+#include <iostream>
+#include <iomanip>
+
 using namespace std;
 
-int IsEmpty(Stack S) {
-    return (S.top == -1);
+void buatAntreanKosong(Antrean &Q) {
+    Q.depan = -1;
+    Q.belakang = -1;
 }
-int IsFull(Stack S) {
-    return (S.top == MAX - 1);
+bool apaKosong(Antrean Q) {
+    return (Q.depan == -1 && Q.belakang == -1);
 }
-void CreateStack(Stack &S) {
-    S.top = -1; 
+bool apaPenuh(Antrean Q) {
+    return (Q.belakang == MAX_ELEMEN - 1);
 }
-void push(Stack &S, infotype X) {
-    if (IsFull(S)) {
-        cout << "Stack Penuh, Push Gagal!" << endl;
+void geserElemen(Antrean &Q) {
+    int jumlahElemen = Q.belakang - Q.depan + 1;
+    
+    for (int i = 0; i < jumlahElemen; i++) {
+        Q.data[i] = Q.data[Q.depan + i];
+    }
+    Q.depan = 0;
+    Q.belakang = jumlahElemen - 1;
+    cout << " (GESER DATA) "; 
+}
+void masukkan(Antrean &Q, TipeData nilaiBaru) {
+ 
+    if (apaPenuh(Q)) {
+        if (Q.depan > 0) {
+            geserElemen(Q);
+        } else {
+            cout << "Antrian Penuh Sesungguhnya! Data " << nilaiBaru << " gagal dimasukkan." << endl;
+            return;
+        }
+    }
+    if (apaKosong(Q)) {
+        Q.depan = 0;
+        Q.belakang = 0;
     } else {
-        S.top++;
-        S.info[S.top] = X;
+        Q.belakang++;
     }
+    Q.data[Q.belakang] = nilaiBaru;
 }
-infotype pop(Stack &S) {
-    if (IsEmpty(S)) {
-        cout << "Stack Kosong, Pop Gagal!" << endl;
-        return 0; 
+TipeData keluarkan(Antrean &Q) {
+    TipeData nilaiDihapus = -999; 
+
+    if (apaKosong(Q)) {
+        cout << "Antrian Kosong!" << endl;
+        return nilaiDihapus;
+    }
+    nilaiDihapus = Q.data[Q.depan];
+    if (Q.depan == Q.belakang) {
+        buatAntreanKosong(Q); 
     } else {
-        infotype X = S.info[S.top];
-        S.top--; 
-        return X;
+        Q.depan++;
     }
+
+    return nilaiDihapus;
 }
-void printInfo(Stack S) {
-    cout << "[TOP] ";
-    if (IsEmpty(S)) {
-        cout << "Stack Kosong" << endl;
-        return;
+void tampilkanData(Antrean Q) {
+    cout << setw(2) << Q.depan << " - " << setw(2) << Q.belakang << " : ";
+
+    if (apaKosong(Q)) {
+        cout << "empty queue" << endl;
+    } else {
+        for (int i = Q.depan; i <= Q.belakang; i++) {
+            cout << Q.data[i];
+            if (i < Q.belakang) {
+                cout << " "; 
+            }
+        }
+        cout << endl;
     }
-    for (int i = S.top; i >= 0; i--) {
-        cout << S.info[i] << " ";
-    }
-    cout << endl;
-}
-void insertAtBottom(Stack &S, infotype X) {
-    if (IsEmpty(S)) {
-        push(S, X); 
-        return;
-    }
-    infotype temp = pop(S); 
-    insertAtBottom(S, X); 
-    push(S, temp); 
-}
-void balikStack(Stack &S) {
-    if (IsEmpty(S)) {
-        return;
-    }
-    infotype X = pop(S); 
-    balikStack(S);     
-    insertAtBottom(S, X); 
-}
-void pushAscending(Stack &S, infotype X) {
-    if (IsEmpty(S) || S.info[S.top] <= X) {
-        push(S, X); 
-        return;
-    }
-    infotype temp = pop(S); 
-    pushAscending(S, X);    
-    push(S, temp);          
 }
 ```
 *main.cpp*
 ```C++
-#include "stack.h"
+#include "queue.h" 
 #include <iostream>
+
 using namespace std;
 
-int main()
-{
-    cout << "Hello world!" << endl;
-    
-    Stack S;
-    CreateStack(S);
+int main() {
+    cout << "UJI ALTERNATIF 2 (Head/Tail Bergerak)" << endl;
 
-    pushAscending(S, 3);
-    pushAscending(S, 4);
-    pushAscending(S, 8);
-    pushAscending(S, 2);
-    pushAscending(S, 3);
-    pushAscending(S, 9);
+    Antrean Q;
+    buatAntreanKosong(Q);
+
+    cout << "-----------------------------------" << endl;
+    cout << " H - T : Queue Info" << endl;
+    cout << "-----------------------------------" << endl;
+
+    masukkan(Q, 10); 
+    masukkan(Q, 20); 
+    masukkan(Q, 30); 
+    masukkan(Q, 40);
+    masukkan(Q, 50); tampilkanData(Q); 
+
+    cout << "DEQUEUE 3x (H berubah) >>" << endl;
+    keluarkan(Q); tampilkanData(Q); 
+    keluarkan(Q); tampilkanData(Q); 
+    keluarkan(Q); tampilkanData(Q); 
     
-    cout << "Setelah pushAscending:" << endl;
-    printInfo(S); 
-    cout << "balik stack" << endl;
-    balikStack(S);
-    printInfo(S); 
+    cout << "ENQUEUE 60 (Harusnya geser data) >>" << endl;
+    masukkan(Q, 60); tampilkanData(Q); 
     
+    masukkan(Q, 70); tampilkanData(Q); 
+    masukkan(Q, 80); tampilkanData(Q); 
+
+    cout << "ENQUEUE 90 (Penuh Sesungguhnya) >>" << endl;
+    masukkan(Q, 90); 
+    tampilkanData(Q); 
+
     return 0;
 }
 ```
 #### Output:
-<img width="1014" height="153" alt="{30A044AA-A453-46BB-90CA-5901DD43DF7E}" src="https://github.com/user-attachments/assets/020bfc76-6176-4ea7-aac4-0c70542f2c91" />
+<img width="1014" height="404" alt="{9F2F2305-E1B9-42D4-ADA6-88FFC053434D}" src="https://github.com/user-attachments/assets/6d87a7a4-29b1-4ae1-863b-67969fdc91c0" />
 
-Program menjalankan siklus inisialisasi, lalu menggunakan prosedur pushAscending (penyisipan terurut) untuk memasukkan enam elemen; prosedur rekursif ini menjamin urutan terurut menaik (terkecil di dasar, terbesar di TOP), menghasilkan 9 8 4 3 3 2. Setelah itu, prosedur balikStack dipanggil untuk membalikkan seluruh tumpukan, menghasilkan output akhir 2 3 3 4 8 9.
+Implementasi program ini mewujudkan konsep Antrean (Queue) dengan menggunakan array dan mengadopsi skema Alternatif 2, yang memungkinkan penanda Head (depan) dan Tail (belakang) untuk bergerak secara independen. Pendekatan ini secara mendasar bertujuan meningkatkan efisiensi: saat elemen terdepan dikeluarkan (Dequeue), penanda Head hanya melompat maju, sehingga menghilangkan kebutuhan untuk menggeser seluruh sisa data (seperti yang terjadi pada Alternatif 1).
 
 #### Full code Screenshot:
-<img width="1920" height="1080" alt="{261E7B77-DA8F-4243-83DC-A77D9B6543FF}" src="https://github.com/user-attachments/assets/e9d17381-36bd-4131-af0a-6caad2d0dee7" />
-<img width="1920" height="1080" alt="{B3C53CDD-5F5B-465D-9162-3130D7E8DDC5}" src="https://github.com/user-attachments/assets/6a2984a6-9dff-49ef-ac10-14672b65096b" />
-<img width="1920" height="1080" alt="{D106D5A0-7C52-4D83-B6EB-B3B0EA24441F}" src="https://github.com/user-attachments/assets/ef54c394-b9c5-49d4-90a5-4f375ed6cdf8" />
-<img width="1920" height="1080" alt="{B9F18226-A7DD-4FE3-A805-B6ACED77842B}" src="https://github.com/user-attachments/assets/fe9a29ff-9429-4d93-bbbc-1c2189ace4c4" />
+<img width="1920" height="1080" alt="{C6BD88EC-64B8-426A-873E-5FF3710E3679}" src="https://github.com/user-attachments/assets/cb65c2b1-b385-43bf-9d74-168fa526255a" />
+<img width="1920" height="1080" alt="{1937D8F9-F5C1-457C-8DE3-570409701BEE}" src="https://github.com/user-attachments/assets/1101b4ad-a23e-4aca-bb8d-aa1b3b669bbf" />
+<img width="1920" height="1080" alt="{432FB38D-5939-4595-8111-EE11E4376886}" src="https://github.com/user-attachments/assets/76c5d400-10d7-4b9d-953a-f859e124dab4" />
 
 
 ### 3. [Soal]
-*stack.h*
+*queue.h*
 ```C++
-#ifndef STACK_H
-#define STACK_H
-#define MAX 20           
+#ifndef ANTREAM_H
+#define ANTREAM_H
 
-typedef int infotype;    
-struct Stack {
-    infotype info[MAX];
-    int top;
-};
-void CreateStack(Stack &S);
-int IsEmpty(Stack S);
-int IsFull(Stack S);
-void push(Stack &S, infotype X);
-infotype pop(Stack &S); 
-void printInfo(Stack S);
-void insertAtBottom(Stack &S, infotype X); 
-void balikStack(Stack &S);
-void pushAscending(Stack &S, infotype X); 
-void getInputStream(Stack &S); 
-
-#endif 
-```
-*stack.cpp*
-```C++
-#include "stack.h"
 #include <iostream>
 
-using namespace std; 
-void CreateStack(Stack &S) { S.top = -1; }
-int IsEmpty(Stack S) { return (S.top == -1); }
-int IsFull(Stack S) { return (S.top == MAX - 1); }
-void push(Stack &S, infotype X) {
-    if (IsFull(S)) { cout << "Error: Stack Penuh, Push Gagal!" << endl; } 
-    else { S.top++; S.info[S.top] = X; }
+typedef int TipeData;
+
+#define MAX_ELEMEN 5 
+
+struct Antrean {
+    TipeData data[MAX_ELEMEN]; 
+    int depan;                
+    int belakang;              
+};
+void buatAntreanKosong(Antrean &Q);
+bool apaKosong(Antrean Q);
+bool apaPenuh(Antrean Q);
+void masukkan(Antrean &Q, TipeData nilaiBaru);
+TipeData keluarkan(Antrean &Q);
+void tampilkanData(Antrean Q);
+
+#endif
+```
+*queue.cpp*
+```C++
+#include "queue.h"
+#include <iostream>
+#include <iomanip>
+
+using namespace std;
+
+void buatAntreanKosong(Antrean &Q) {
+    Q.depan = -1;
+    Q.belakang = -1;
 }
-infotype pop(Stack &S) {
-    if (IsEmpty(S)) { cout << "Error: Stack Kosong, Pop Gagal!" << endl; return 0; } 
-    else { infotype X = S.info[S.top]; S.top--; return X; }
+bool apaKosong(Antrean Q) {
+    return (Q.depan == -1); 
 }
-void printInfo(Stack S) {
-    cout << "[TOP] ";
-    if (IsEmpty(S)) { cout << "Stack Kosong" << endl; return; }
-    for (int i = S.top; i >= 0; i--) { cout << S.info[i] << " "; }
-    cout << endl;
+bool apaPenuh(Antrean Q) {
+    if (Q.depan == 0 && Q.belakang == MAX_ELEMEN - 1) {
+        return true;
+    }
+    if (Q.depan == Q.belakang + 1) {
+        return true;
+    }
+    return false;
 }
-void insertAtBottom(Stack &S, infotype X) {
-    if (IsEmpty(S)) { push(S, X); return; }
-    infotype temp = pop(S); insertAtBottom(S, X); push(S, temp); 
+void masukkan(Antrean &Q, TipeData nilaiBaru) {
+    if (apaPenuh(Q)) {
+        cout << "Antrian Penuh (Circular Queue)! Data " << nilaiBaru << " gagal dimasukkan." << endl;
+        return;
+    }
+    if (apaKosong(Q)) {
+        Q.depan = 0;
+        Q.belakang = 0;
+    } else {
+        Q.belakang = (Q.belakang + 1) % MAX_ELEMEN;
+    }
+    Q.data[Q.belakang] = nilaiBaru;
 }
-void balikStack(Stack &S) {
-    if (IsEmpty(S)) { return; }
-    infotype X = pop(S); balikStack(S); insertAtBottom(S, X); 
+TipeData keluarkan(Antrean &Q) {
+    TipeData nilaiDihapus = -999; 
+    if (apaKosong(Q)) {
+        cout << "Antrian Kosong!" << endl;
+        return nilaiDihapus;
+    }
+    nilaiDihapus = Q.data[Q.depan];
+
+    if (Q.depan == Q.belakang) {
+        buatAntreanKosong(Q); 
+    } else {
+        Q.depan = (Q.depan + 1) % MAX_ELEMEN;
+    }
+    return nilaiDihapus;
 }
-void pushAscending(Stack &S, infotype X) {
-    if (IsEmpty(S) || S.info[S.top] <= X) { push(S, X); return; }
-    infotype temp = pop(S); pushAscending(S, X); push(S, temp);          
-}
-void getInputStream(Stack &S) {
-    char ch;
-    
-    cout << "Input : ";
-    while (cin.get(ch) && ch != '\n') {
-        
-        if (ch >= '0' && ch <= '9') {
-            infotype X = ch - '0';
-            push(S, X); 
-        } 
+void tampilkanData(Antrean Q) {
+    cout << setw(2) << Q.depan << " - " << setw(2) << Q.belakang << " : ";
+
+    if (apaKosong(Q)) {
+        cout << "empty queue" << endl;
+    } else {
+        int i = Q.depan;
+        while (true) {
+            cout << Q.data[i];
+            if (i == Q.belakang) break; 
+
+            i = (i + 1) % MAX_ELEMEN;
+            cout << " ";
+        }
+        cout << endl;
     }
 }
 ```
 *main.cpp*
 ```C++
-#include "stack.h"
+#include "queue.h" 
 #include <iostream>
+#include <iomanip>
 
 using namespace std;
 
-int main()
-{
-    cout << "Hello world!" << endl;
-    Stack S;
-    CreateStack(S);
-    getInputStream(S); 
-    printInfo(S); 
+int main() {
+    cout << "UJI ALTERNATIF 3 (Head/Tail Berputar - Circular Queue)" << endl;
+
+    Antrean Q;
+    buatAntreanKosong(Q);
+
+    cout << "-----------------------------------" << endl;
+    cout << " H - T : Queue Info" << endl;
+    cout << "-----------------------------------" << endl;
+
+    masukkan(Q, 10); 
+    masukkan(Q, 20); 
+    masukkan(Q, 30); 
+    masukkan(Q, 40); 
+    masukkan(Q, 50); tampilkanData(Q); 
+
+    cout << "DEQUEUE 3x (H bergerak) >>" << endl;
+    keluarkan(Q); tampilkanData(Q);
+    keluarkan(Q); tampilkanData(Q); 
+    keluarkan(Q); tampilkanData(Q); 
     
-    cout << "balik stack" << endl;
-    balikStack(S);
-    printInfo(S); 
+    cout << "ENQUEUE 60 (Tail berputar ke 0) >>" << endl;
+    masukkan(Q, 60); tampilkanData(Q);
+    cout << "ENQUEUE 70 (Tail maju ke 1) >>" << endl;
+    masukkan(Q, 70); tampilkanData(Q); 
+    cout << "ENQUEUE 80 (Tail maju ke 2 -> PENUH) >>" << endl;
+    masukkan(Q, 80); tampilkanData(Q); 
+    cout << "ENQUEUE 90 (Gagal, Penuh) >>" << endl;
+    masukkan(Q, 90); tampilkanData(Q); 
+    cout << "DEQUEUE 4x (H berputar ke 0) >>" << endl;
+    keluarkan(Q); tampilkanData(Q); 
+    keluarkan(Q); tampilkanData(Q); 
+    keluarkan(Q); tampilkanData(Q); 
+    keluarkan(Q); tampilkanData(Q); 
     
+    cout << "DEQUEUE terakhir (Kosong) >>" << endl;
+    keluarkan(Q); tampilkanData(Q); 
+
     return 0;
 }
 ```
 #### Output:
-<img width="1024" height="160" alt="{2AA0788D-A214-496B-B485-E3E699394F4D}" src="https://github.com/user-attachments/assets/170b084f-ad7c-4f3d-b107-353f6b1c877c" />
+<img width="819" height="576" alt="{D091D834-0055-4D68-AA59-E03FA39E1621}" src="https://github.com/user-attachments/assets/d1e6add8-31e7-44fe-ae3b-475c1c6df9f8" />
 
-Program ini berfokus pada pemrosesan input data stream. Prosedur getInputStream membaca input pengguna karakter demi karakter, memfilter hanya digit, dan menyisipkannya ke Stack (LIFO). Untuk mengembalikan urutan ke kondisi asli input, Stack kemudian dibalik oleh balikStack. Hasil akhirnya adalah tampilan urutan digit yang sama persis seperti yang dimasukkan pengguna.
+Program ini mengimplementasikan Antrean (Queue) Melingkar menggunakan array, di mana penanda Head dan Tail bergerak bebas dan berputar kembali ke awal array (indeks 0) setelah mencapai batas akhir. Keunggulannya adalah efisiensi optimal ($O(1)$) karena menghilangkan semua pergeseran data (shifting) dan mengatasi masalah "penuh semu" dengan memanfaatkan seluruh ruang array. Kondisi penuh hanya dideteksi ketika Tail berada tepat satu langkah di belakang Head secara melingkar.
 
 #### Full code Screenshot:
-<img width="1920" height="1080" alt="{C0E695AD-01B6-477C-9346-D2FD2F8CC441}" src="https://github.com/user-attachments/assets/a245c7da-a111-40d5-99d6-0b8a7e3f0237" />
-<img width="1920" height="1080" alt="{6576DADD-0430-4318-9EFD-2DD50791B8E7}" src="https://github.com/user-attachments/assets/c5764cbd-692e-4d4e-bfd8-205be7b0fc74" />
-<img width="1920" height="1080" alt="{5B4164CB-0D71-4AEF-9675-A0D9D1849F78}" src="https://github.com/user-attachments/assets/d930c073-1c21-4dd6-ab99-49c8e2952c13" />
-<img width="1920" height="1080" alt="{E467B6D8-041A-4DD6-80D4-532EF5E3C460}" src="https://github.com/user-attachments/assets/8de03d08-bbd2-4946-9813-8ce93ff3b607" />
+<img width="1920" height="1080" alt="{8EC95C06-1501-406C-80E7-8482E5B22CD4}" src="https://github.com/user-attachments/assets/fb27f557-648a-4a7e-ba3d-f1c1aa156d74" />
+<img width="1920" height="1080" alt="{7FA6FD25-F6CB-4986-829D-2D3D81C546D6}" src="https://github.com/user-attachments/assets/817d2a2c-d6b9-4b95-919c-93e331bc0768" />
+<img width="1920" height="1080" alt="{AE74040C-5199-4723-83A3-D240A5AB05DD}" src="https://github.com/user-attachments/assets/1a8513a5-d0aa-42c1-93aa-e1a43ab9df45" />
 
 
 ## Kesimpulan
-Program ini berhasil mengimplementasikan Abstract Data Type (ADT) Stack berbasis array dengan fungsionalitas lanjutan. Implementasi ini mendemonstrasikan bahwa manipulasi urutan kompleks seperti pembalikan (balikStack) dan penyisipan terurut (pushAscending) dapat dicapai secara efektif melalui rekursi, dengan tetap mematuhi batasan operasi Stack (hanya push dan pop). Selain itu, program berhasil mengintegrasikan pemrosesan input dari pengguna (getInputStream) untuk mengubah karakter mentah menjadi elemen Stack, membuktikan penguasaan prinsip LIFO dan integrasi I/O.
+Implementasi ADT Queue menggunakan array memiliki tiga skema utama yang memengaruhi efisiensi: Alternatif 1 (Head Diam) paling tidak efisien karena wajib menggeser seluruh data saat penghapusan (Dequeue). Alternatif 2 (Head Bergerak) lebih cepat karena Dequeue tidak memerlukan pergeseran, namun rentan terhadap masalah "penuh semu" yang memaksa dilakukannya pergeseran data korektif. Solusi terbaik dan paling optimal adalah Alternatif 3 (Circular Queue), yang secara total menghilangkan kebutuhan pergeseran data dan mengatasi masalah penuh semu dengan membuat penunjuk Head dan Tail berputar menggunakan aritmatika modular.
 
 ## Referensi
-1. Modul 7 Stack
-2. Konsep dan Implementasi Stack dengan Array di C++.
-3. GeeksforGeeks. (2025). C++ Program For char to int Conversion.
+1. Modul 8 Queue
+2. Goodrich, M. T., Tamassia, R., & Mount, D. M. (2011). Data Structures and Algorithms in C++ (2nd ed.). John Wiley & Sons.
+3. GeeksforGeeks. (n.d.). Circular Queue | Set 1 (Introduction and Array Implementation)
