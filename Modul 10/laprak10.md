@@ -1,5 +1,5 @@
 # <h1 align="center">  TREE(BAGIANPERTAMA)  </h1>
-<p align="center">Amelia Sofiana Makkharomi</p>
+<p align="center">Amelia Sofiana Makharomi</p>
 
 ## Dasar Teori
 Tree merupakan struktur data non-linear yang menyimpan data secara hierarkis dengan satu root. Binary Search Tree (BST) adalah binary tree yang mengatur data sehingga nilai di kiri lebih kecil dan di kanan lebih besar dari parent. Operasi pada BST umumnya dilakukan secara rekursif, dan traversal in-order menghasilkan data terurut menaik.
