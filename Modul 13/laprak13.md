@@ -1,5 +1,5 @@
 # <h1 align="center">  MULTI LINKED LIST  </h1>
-<p align="center">Amelia Sofiana Makkharomi</p>
+<p align="center">Amelia Sofiana Makharomi</p>
 
 ## Dasar Teori
 Multi Linked List adalah struktur data yang terdiri dari beberapa linked list yang saling terhubung, umumnya berbentuk list induk dan list anak. Setiap elemen induk memiliki satu list anak sehingga membentuk hubungan satu ke banyak.
