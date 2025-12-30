@@ -1,5 +1,5 @@
 # <h1 align="center">  GRAPH  </h1>
-<p align="center">Amelia Sofiana Makkharomi</p>
+<p align="center">Amelia Sofiana Makharomi</p>
 
 ## Dasar Teori
 Graph adalah struktur data yang terdiri dari node (vertex) dan edge yang merepresentasikan hubungan antar node. Graph dibedakan menjadi graph berarah dan tidak berarah. Representasi graph dapat menggunakan matriks ketetanggaan atau multilist, dimana multilist digunakan karena bersifat dinamis. Penelusuran graph dilakukan dengan metode Breadth First Search (BFS) dan Depth First Search (DFS), sedangkan graph berarah dapat digunakan untuk topological sort untuk menentukan urutan linear berdasarkan keterurutan parsial.
