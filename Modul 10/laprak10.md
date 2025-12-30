@@ -429,7 +429,8 @@ int height(BinTree tree){ //mengembalikan jumlah level tree
 
 ## Unguided 
 
-bstree.h
+### 1. [Soal]
+*bstree.h*
 ```C++
 #ifndef BSTREE_H
 #define BSTREE_H
@@ -455,7 +456,7 @@ void cetakInOrder(address root);
 #endif
 ```
 
-bstree.cpp
+*bstree.cpp*
 ```c++
 #include "bstree.h"
 
@@ -501,7 +502,8 @@ void cetakInOrder(address root) {
     }
 }
 ```
-main.cpp
+
+*main.cpp*
 ```c++
 #include <iostream>
 #include "bstree.h"
@@ -528,25 +530,330 @@ int main() {
 }
 ```
 #### Output:
-<img width="265" height="73" alt="image" src="https://github.com/user-attachments/assets/e8869995-68a9-4658-8d74-e69b2cf8bf8f" />
+<img width="1044" height="129" alt="{5EEFF5AF-ADE0-474D-A2A6-66084140F685}" src="https://github.com/user-attachments/assets/c3ae55b7-d677-455e-bcd9-ce5309534c5f" />
 
+Program ini menjalankan implementasi Binary Search Tree (BST) menggunakan linked list. Program menyisipkan beberapa data integer ke dalam BST sesuai aturan kiri lebih kecil, kanan lebih besar, lalu menampilkan seluruh isi tree menggunakan traversal InOrder sehingga data keluar dalam urutan menaik.
 
-
-Pada soal di atas, menekankan pemahaman konsep ADT Binary Search Tree (BST) dalam pengelolaan data secara terurut dan dinamis. Implementasi operasi insert, berbagai traversal, serta fungsi perhitungan jumlah node, total nilai, dan kedalaman menunjukkan keterkaitan proses rekursif untuk menghasilkan struktur tree yang valid, konsisten, dan efisien, termasuk penanganan data duplikat agar sesuai dengan aturan BST.
 #### Full code Screenshot:
+<img width="1920" height="1080" alt="{9D5CC659-11E9-4BF0-8915-0F6954DCBACA}" src="https://github.com/user-attachments/assets/982d5595-4b0a-443e-8a96-aca65d2ae0d0" />
+<img width="1920" height="1080" alt="{C2037BE7-CD31-4046-9958-9C641E282B1A}" src="https://github.com/user-attachments/assets/183ec387-cb30-4660-996d-28edb4e27c6a" />
+<img width="1920" height="1080" alt="{E3C68283-D215-4BEC-93A2-E19D10137A0B}" src="https://github.com/user-attachments/assets/1c3ec803-b527-4692-9e56-bd85599d7283" />
 
-<img width="278" height="278" alt="image" src="https://github.com/user-attachments/assets/43f8ea85-c605-4e62-be22-1fdc8c2b82a1" />
+### 2. [Soal]
+*bstree.h*
+```C++
+#ifndef BSTREE_H
+#define BSTREE_H
 
-<img width="245" height="460" alt="image" src="https://github.com/user-attachments/assets/1efd5329-eab7-4989-a61d-038e4aa6a234" />
+#include <iostream>
+using namespace std;
 
-<img width="359" height="272" alt="image" src="https://github.com/user-attachments/assets/dc6fe351-6e31-47cc-a379-bb0aaffd7033" />
+#define Nil NULL
 
-<img width="374" height="420" alt="image" src="https://github.com/user-attachments/assets/d94d2d2a-e1e4-48a3-8bd0-1a16c8b8d466" />
+typedef int infotype;
+typedef struct Node* address;
+
+struct Node {
+    infotype info;
+    address left;
+    address right;
+};
+address buatNode(infotype x);
+void tambahNode(address &root, infotype x);
+address cariNode(infotype x, address root);
+void cetakInOrder(address root);
+
+int hitungNode(address root);
+int hitungTotal(address root);
+int hitungKedalaman(address root, int level);
+
+#endif    
+```
+
+*bstree.cpp*
+```c++
+#include "bstree.h"
+
+address buatNode(infotype x) {
+    address baru = new Node;
+    if (baru != Nil) {
+        baru->info = x;
+        baru->left = Nil;
+        baru->right = Nil;
+    }
+    return baru;
+}
+void tambahNode(address &root, infotype x) {
+    if (root == Nil) {
+        root = buatNode(x);
+    }
+    else if (x < root->info) {
+        tambahNode(root->left, x);
+    }
+    else if (x > root->info) {
+        tambahNode(root->right, x);
+    }
+}
+address cariNode(infotype x, address root) {
+    if (root == Nil) {
+        return Nil;
+    }
+    if (x == root->info) {
+        return root;
+    }
+    else if (x < root->info) {
+        return cariNode(x, root->left);
+    }
+    else {
+        return cariNode(x, root->right);
+    }
+}
+void cetakInOrder(address root) {
+    if (root != Nil) {
+        cetakInOrder(root->left);
+        cout << root->info << " - ";
+        cetakInOrder(root->right);
+    }
+}
+int hitungNode(address root) {
+    if (root == Nil) {
+        return 0;
+    }
+    return 1 + hitungNode(root->left) + hitungNode(root->right);
+}
+int hitungTotal(address root) {
+    if (root == Nil) {
+        return 0;
+    }
+    return root->info
+         + hitungTotal(root->left)
+         + hitungTotal(root->right);
+}
+int hitungKedalaman(address root, int level) {
+    if (root == Nil) {
+        return level;
+    }
+    int kiri  = hitungKedalaman(root->left, level + 1);
+    int kanan = hitungKedalaman(root->right, level + 1);
+
+    return (kiri > kanan) ? kiri : kanan;
+}
+```
+
+*main.cpp*
+```c++
+#include <iostream>
+#include "bstree.h"
+
+using namespace std;
+
+int main() {
+    cout << "Hello World!" << endl;
+
+    address root = Nil;
+
+    tambahNode(root,1);
+    tambahNode(root,2);
+    tambahNode(root,6);
+    tambahNode(root,4);
+    tambahNode(root,5);
+    tambahNode(root,3);
+    tambahNode(root,6); 
+    tambahNode(root,7);
+
+    cetakInOrder(root);
+    cout << endl;
+
+    cout << "kedalaman : " << hitungKedalaman(root,0) << endl;
+    cout << "jumlah node : " << hitungNode(root) << endl;
+    cout << "total : " << hitungTotal(root) << endl;
+
+    return 0;
+}
+```
+
+#### Output:
+<img width="1045" height="161" alt="{D555A3C7-A1A4-43A2-915C-6C341596FAD9}" src="https://github.com/user-attachments/assets/b41fbcb8-b17f-48a9-8009-b7404c2dbee8" />
+
+Program ini menyimpan data ke dalam Binary Search Tree (BST), lalu menampilkan isi tree secara in-order serta menghitung kedalaman tree, jumlah node, dan total nilai seluruh node menggunakan fungsi rekursif.
+
+#### Full code Screenshot:
+<img width="1920" height="1080" alt="{AD61AD9E-DEF3-42A3-B38D-3AABBB8264DB}" src="https://github.com/user-attachments/assets/219a4d3e-7879-493f-9dae-f6e01f819208" />
+<img width="1920" height="1080" alt="{90F3C326-9C30-4556-B7DF-492871AC6357}" src="https://github.com/user-attachments/assets/40ca1d71-0ba3-4341-a3d2-30e6e2d163e8" />
+<img width="1920" height="1080" alt="{95D69A6D-BBB0-457F-B49C-297AF1490F6B}" src="https://github.com/user-attachments/assets/2423cfde-bde9-4831-aca6-c03941b2615e" />
+
+### 3. [Soal]
+*bstree.h*
+```C++
+#ifndef BSTREE_H
+#define BSTREE_H
+
+#include <iostream>
+using namespace std;
+
+#define Nil NULL
+
+typedef int infotype;
+typedef struct Node* address;
+
+struct Node {
+    infotype info;
+    address left;
+    address right;
+};
+address buatNode(infotype x);
+void tambahNode(address &root, infotype x);
+address cariNode(infotype x, address root);
+void cetakInOrder(address root);
+
+int hitungNode(address root);
+int hitungTotal(address root);
+int hitungKedalaman(address root, int level);
+
+void cetakPreOrder(address root);
+void cetakPostOrder(address root);
+
+#endif    
+```
+
+*bstree.cpp*
+```c++
+#include "bstree.h"
+
+address buatNode(infotype x) {
+    address baru = new Node;
+    if (baru != Nil) {
+        baru->info = x;
+        baru->left = Nil;
+        baru->right = Nil;
+    }
+    return baru;
+}
+void tambahNode(address &root, infotype x) {
+    if (root == Nil) {
+        root = buatNode(x);
+    }
+    else if (x < root->info) {
+        tambahNode(root->left, x);
+    }
+    else if (x > root->info) {
+        tambahNode(root->right, x);
+    }
+}
+address cariNode(infotype x, address root) {
+    if (root == Nil) {
+        return Nil;
+    }
+    if (x == root->info) {
+        return root;
+    }
+    else if (x < root->info) {
+        return cariNode(x, root->left);
+    }
+    else {
+        return cariNode(x, root->right);
+    }
+}
+void cetakInOrder(address root) {
+    if (root != Nil) {
+        cetakInOrder(root->left);
+        cout << root->info << " - ";
+        cetakInOrder(root->right);
+    }
+}
+int hitungNode(address root) {
+    if (root == Nil) {
+        return 0;
+    }
+    return 1 + hitungNode(root->left) + hitungNode(root->right);
+}
+int hitungTotal(address root) {
+    if (root == Nil) {
+        return 0;
+    }
+    return root->info
+         + hitungTotal(root->left)
+         + hitungTotal(root->right);
+}
+int hitungKedalaman(address root, int level) {
+    if (root == Nil) {
+        return level;
+    }
+    int kiri  = hitungKedalaman(root->left, level + 1);
+    int kanan = hitungKedalaman(root->right, level + 1);
+
+    return (kiri > kanan) ? kiri : kanan;
+}
+void cetakPreOrder(address root) {
+    if (root != Nil) {
+        cout << root->info << " - ";
+        cetakPreOrder(root->left);
+        cetakPreOrder(root->right);
+    }
+}
+void cetakPostOrder(address root) {
+    if (root != Nil) {
+        cetakPostOrder(root->left);
+        cetakPostOrder(root->right);
+        cout << root->info << " - ";
+    }
+}
+```
+
+*main.cpp*
+```c++
+#include <iostream>
+#include "bstree.h"
+
+using namespace std;
+
+int main() {
+    cout << "Hello World!" << endl;
+
+    address root = Nil;
+
+    tambahNode(root,1);
+    tambahNode(root,2);
+    tambahNode(root,6);
+    tambahNode(root,4);
+    tambahNode(root,5);
+    tambahNode(root,3);
+    tambahNode(root,6);
+    tambahNode(root,7);
+
+    cout << "InOrder   : ";
+    cetakInOrder(root);
+    cout << endl;
+
+    cout << "PreOrder  : ";
+    cetakPreOrder(root);
+    cout << endl;
+
+    cout << "PostOrder : ";
+    cetakPostOrder(root);
+    cout << endl;
+
+    return 0;
+}
+```
+
+#### Output:
+<img width="1053" height="141" alt="{9B363DC2-C36C-4AA5-9151-674EDD35740B}" src="https://github.com/user-attachments/assets/92852ef7-4e01-4698-91f6-48a8210e437c" />
+
+Program menampilkan isi Binary Search Tree menggunakan metode traversal pre-order dan post-order untuk melihat urutan kunjungan node berdasarkan akar dan subtree.
+
+#### Full code Screenshot:
+<img width="1920" height="1080" alt="{E7E8153A-520C-43C5-BC74-46D2A79FB0CD}" src="https://github.com/user-attachments/assets/ef97f21b-a248-4294-af82-eec7c33ba7b9" />
+<img width="1920" height="1080" alt="{7E40DCDD-C274-4BC8-BE3A-55C67FD7820E}" src="https://github.com/user-attachments/assets/980c4b67-a508-40ec-858a-b8550b10e424" />
+<img width="1920" height="1080" alt="{9457EA1C-1631-4F8A-9870-39360E36BB09}" src="https://github.com/user-attachments/assets/a8757521-c0d7-4279-b866-e408835ea340" />
+
 
 ## Kesimpulan
-Binary Search Tree (BST) merupakan struktur data yang efektif untuk menyimpan data secara terurut dan hierarkis, dengan dukungan operasi pencarian, penyisipan, dan traversal yang efisien. Meskipun kinerjanya sangat baik pada kondisi tree seimbang, BST tetap membutuhkan pengelolaan yang tepat untuk mencegah struktur menjadi tidak optimal. Oleh karena itu, BST sangat cocok digunakan pada aplikasi yang membutuhkan pengolahan data terurut dan analisis struktur secara rekursif.
+Struktur data Binary Search Tree (BST) mampu menyimpan data secara terstruktur dan memudahkan proses pencarian serta pengolahan data. Implementasi BST menggunakan linked list dapat dilakukan dengan memanfaatkan konsep rekursif pada operasi penambahan data, penelusuran, dan traversal. Melalui praktikum ini, diperoleh pemahaman bahwa metode traversal in-order, pre-order, dan post-order menghasilkan urutan kunjungan node yang berbeda sesuai kebutuhan. Selain itu, fungsi rekursif dapat digunakan untuk menghitung jumlah node, total nilai node, dan kedalaman tree secara efektif. Praktikum ini membantu memahami penerapan tree dalam pemrograman serta meningkatkan pemahaman konsep struktur data non-linear.
+
 ## Referensi
-Petani Kode. (n.d.). Struktur Data Tree (Pohon) dan Binary Search Tree.
+1. Modul 10 Tree (bagian pertama)
+2. Cormen, T. H., Leiserson, C. E., Rivest, R. L., & Stein, C. (2009).
 
 
 
